@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_staticpage';
-$plugin->version = 2025100600;
-$plugin->release = 'v5.1-r1';
-$plugin->requires = 2025100600;
-$plugin->supported = [501, 501];
-$plugin->maturity = MATURITY_STABLE;
+$plugin->version = 2026010601;  // Added database storage.
+$plugin->release = 'v5.1-r2-preparaoposiciones';
+$plugin->requires = 2024100700; // Moodle 4.5+
+$plugin->supported = [405, 501];
+$plugin->maturity = MATURITY_BETA;

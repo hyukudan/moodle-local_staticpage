@@ -92,5 +92,45 @@ function xmldb_local_staticpage_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021120803, 'local', 'staticpage');
     }
 
+    // PreparaOposiciones: Add database storage for pages.
+    if ($oldversion < 2026010601) {
+        global $DB;
+
+        $dbman = $DB->get_manager();
+
+        // Define table local_staticpage_pages.
+        $table = new xmldb_table('local_staticpage_pages');
+
+        // Adding fields.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('slug', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('metadescription', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('showintoc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
+
+        // Adding indexes.
+        $table->add_index('slug', XMLDB_INDEX_UNIQUE, ['slug']);
+        $table->add_index('status_sortorder', XMLDB_INDEX_NOTUNIQUE, ['status', 'sortorder']);
+
+        // Create table if it doesn't exist.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Remember upgrade savepoint.
+        upgrade_plugin_savepoint(true, 2026010601, 'local', 'staticpage');
+    }
+
     return true;
 }
