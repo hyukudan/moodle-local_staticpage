@@ -108,6 +108,7 @@ function xmldb_local_staticpage_upgrade($oldversion) {
         $table->add_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('contentformat', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '1');
         $table->add_field('metadescription', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('ogimage', XMLDB_TYPE_CHAR, '500', null, null, null, null);
         $table->add_field('status', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
         $table->add_field('showintoc', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1');
         $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
@@ -130,6 +131,23 @@ function xmldb_local_staticpage_upgrade($oldversion) {
 
         // Remember upgrade savepoint.
         upgrade_plugin_savepoint(true, 2026010601, 'local', 'staticpage');
+    }
+
+    // PreparaOposiciones: Add ogimage field for social sharing.
+    if ($oldversion < 2026010602) {
+        global $DB;
+
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('local_staticpage_pages');
+
+        // Add ogimage field if it doesn't exist.
+        $field = new xmldb_field('ogimage', XMLDB_TYPE_CHAR, '500', null, null, null, null, 'metadescription');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Remember upgrade savepoint.
+        upgrade_plugin_savepoint(true, 2026010602, 'local', 'staticpage');
     }
 
     return true;

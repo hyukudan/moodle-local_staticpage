@@ -77,3 +77,36 @@ $string['settingspagelistinstruction'] = 'This list shows all static pages which
 $string['settingspagelistnofiles'] = 'There are no .html files in the <a href="{$a}">static pages document area</a>, therefore there are no static pages to be delivered. See the <a href="https://github.com/moodle-an-hochschulen/moodle-local_staticpage/blob/main/README.md#1-documents">plugin documentation on Github</a> for details.';
 $string['staticpage:managedocuments'] = 'Manage static page documents';
 $string['upgrade_notice_2016020307'] = '<strong>UPGRADE NOTICE:</strong> The static page document files were moved to the new filearea within Moodle. You can delete the legacy documents directory {$a} now. For more upgrade instructions, especially if you have been using the multilanguage features of this plugin, see the <a href="https://github.com/moodle-an-hochschulen/moodle-local_staticpage/blob/main/README.md#upgrading-from-previous-versions">plugin documentation on Github</a> for details.';
+
+// PreparaOposiciones: Enhanced static pages strings.
+$string['tableofcontents'] = 'Table of Contents';
+$string['readingtime'] = '{$a} min read';
+$string['sharethispage'] = 'Share:';
+$string['shareon'] = 'Share on {$a}';
+$string['copylink'] = 'Copy link';
+$string['linkcopied'] = 'Link copied to clipboard';
+$string['breadcrumbs'] = 'Breadcrumbs';
+$string['lastupdated'] = 'Last updated: {$a}';
+$string['previouspage'] = 'Previous';
+$string['nextpage'] = 'Next';
+$string['managepages'] = 'Manage static pages';
+$string['addnewpage'] = 'Add new page';
+$string['editpage'] = 'Edit page';
+$string['deletepage'] = 'Delete page';
+$string['pageslug'] = 'URL slug';
+$string['pageslug_help'] = 'URL-friendly identifier (e.g., how-it-works). Only lowercase letters, numbers and hyphens.';
+$string['pagetitle'] = 'Page title';
+$string['pagecontent'] = 'Page content';
+$string['metadescription'] = 'Meta description';
+$string['metadescription_help'] = 'Short description for search engines and social media (max 160 characters).';
+$string['ogimage'] = 'Social image';
+$string['ogimage_help'] = 'Image URL for social media sharing (recommended: 1200x630 pixels).';
+$string['pagestatus'] = 'Status';
+$string['statusdraft'] = 'Draft';
+$string['statuspublished'] = 'Published';
+$string['showintoc'] = 'Show in navigation';
+$string['showintoc_help'] = 'Include this page in site navigation menus.';
+$string['sortorder'] = 'Sort order';
+$string['pagesaved'] = 'Page saved successfully';
+$string['pagedeleted'] = 'Page deleted successfully';
+$string['confirmdelete'] = 'Are you sure you want to delete the page "{$a}"?';

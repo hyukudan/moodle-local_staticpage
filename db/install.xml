@@ -9,6 +9,7 @@
         <FIELD NAME="content" TYPE="text" NOTNULL="false" COMMENT="Page HTML content"/>
         <FIELD NAME="contentformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" COMMENT="Moodle text format"/>
         <FIELD NAME="metadescription" TYPE="char" LENGTH="255" NOTNULL="false" COMMENT="SEO meta description"/>
+        <FIELD NAME="ogimage" TYPE="char" LENGTH="500" NOTNULL="false" COMMENT="Open Graph image URL for social sharing"/>
         <FIELD NAME="status" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="0=draft, 1=published"/>
         <FIELD NAME="showintoc" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" COMMENT="Show in table of contents/menu"/>
         <FIELD NAME="sortorder" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" COMMENT="Display order"/>
