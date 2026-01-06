@@ -1,145 +1,145 @@
-# moodle-local_staticpage (Fork PreparaOposiciones)
+# moodle-local_staticpage (PreparaOposiciones Fork)
 
-**Fork del plugin original [moodle-an-hochschulen/moodle-local_staticpage](https://github.com/moodle-an-hochschulen/moodle-local_staticpage) con funcionalidades extendidas para SEO, tabla de contenidos y compartir en redes sociales.**
+**Fork of the original [moodle-an-hochschulen/moodle-local_staticpage](https://github.com/moodle-an-hochschulen/moodle-local_staticpage) plugin with extended features for SEO, table of contents, and social sharing.**
 
-Este fork es mantenido por [PreparaOposiciones](https://www.preparaoposiciones.com) para uso en nuestra plataforma de preparacion de oposiciones.
+This fork is maintained by [PreparaOposiciones](https://www.preparaoposiciones.com) for use in our exam preparation platform.
 
 ---
 
-## Funcionalidades Nuevas (Fork)
+## New Features (Fork)
 
-### 1. SEO y Meta Tags
+### 1. SEO & Meta Tags
 
-- **Meta description**: Campo para descripcion SEO personalizada por pagina
-- **Open Graph**: Tags completos para compartir en Facebook, LinkedIn, etc.
-- **Twitter Cards**: Soporte para cards de resumen con imagen
-- **Schema.org JSON-LD**: Datos estructurados para rich snippets en Google
-- **Canonical URLs**: URLs canonicas automaticas
-- **OG Image**: Campo para imagen personalizada al compartir
+- **Meta description**: Custom SEO description field per page
+- **Open Graph**: Full OG tags for sharing on Facebook, LinkedIn, etc.
+- **Twitter Cards**: Summary card with image support
+- **Schema.org JSON-LD**: Structured data for Google rich snippets
+- **Canonical URLs**: Automatic canonical URL generation
+- **OG Image**: Custom social sharing image field
 
-### 2. Tabla de Contenidos Automatica
+### 2. Automatic Table of Contents
 
-- Genera automaticamente un indice navegable desde los encabezados H2 y H3
-- Sticky sidebar en desktop para navegacion rapida
-- Smooth scroll al hacer clic en los enlaces
-- Se muestra solo si hay 2+ secciones
+- Automatically generates a navigable index from H2 and H3 headings
+- Sticky sidebar on desktop for quick navigation
+- Smooth scroll when clicking links
+- Only displays when there are 2+ sections
 
-### 3. Compartir en Redes Sociales
+### 3. Social Sharing Buttons
 
-Botones para compartir la pagina en:
+Share buttons for:
 - Twitter/X
 - Facebook
 - LinkedIn
 - WhatsApp
 - Telegram
-- Copiar enlace al portapapeles
+- Copy link to clipboard
 
-### 4. Mejoras de UX
+### 4. UX Improvements
 
-- **Tiempo de lectura**: Calculo automatico basado en el contenido
-- **Navegacion prev/next**: Enlaces a pagina anterior y siguiente
-- **Breadcrumbs**: Migas de pan para mejor navegacion
-- **Layout frontpage**: Usa el layout de portada para efecto de navbar transparente
+- **Reading time**: Automatic calculation based on content length
+- **Prev/Next navigation**: Links to previous and next pages
+- **Breadcrumbs**: Breadcrumb navigation for better UX
+- **Frontpage layout**: Uses frontpage layout for transparent navbar effect
 
-### 5. Base de Datos Extendida
+### 5. Extended Database
 
-Nueva tabla `local_staticpage_pages` con campos adicionales:
-- `slug`: Identificador URL amigable
-- `title`: Titulo de la pagina
-- `content`: Contenido HTML
-- `metadescription`: Descripcion SEO
-- `ogimage`: URL de imagen para redes sociales
+New `local_staticpage_pages` table with additional fields:
+- `slug`: URL-friendly identifier
+- `title`: Page title
+- `content`: HTML content
+- `metadescription`: SEO description
+- `ogimage`: Social media image URL
 - `status`: draft/published
-- `sortorder`: Orden para navegacion
+- `sortorder`: Order for navigation
 
-### 6. Idioma Espanol
+### 6. Spanish Language Pack
 
-Pack de idioma completo en espanol (es).
-
----
-
-## Instalacion
-
-1. Clonar o descargar este repositorio
-2. Copiar a `/local/staticpage/` en tu instalacion Moodle
-3. Visitar la pagina de administracion para completar la instalacion
-4. Configurar en: Administracion del sitio -> Static Pages
+Complete Spanish (es) language pack included.
 
 ---
 
-## Uso
+## Installation
 
-### Subir Paginas
+1. Clone or download this repository
+2. Copy to `/local/staticpage/` in your Moodle installation
+3. Visit the admin page to complete installation
+4. Configure at: Site administration -> Static Pages
 
-Las paginas se suben como archivos HTML en:
-**Administracion del sitio -> Static Pages -> Documents**
+---
 
-### Estructura HTML Recomendada
+## Usage
+
+### Uploading Pages
+
+Pages are uploaded as HTML files at:
+**Site administration -> Static Pages -> Documents**
+
+### Recommended HTML Structure
 
 ```html
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Titulo de la Pagina</title>
+    <title>Page Title</title>
     <style>
-        /* Estilos CSS personalizados */
+        /* Custom CSS styles */
     </style>
 </head>
 <body>
-    <h1>Titulo Principal</h1>
+    <h1>Main Title</h1>
 
-    <h2>Primera Seccion</h2>
-    <p>Contenido...</p>
+    <h2>First Section</h2>
+    <p>Content...</p>
 
-    <h2>Segunda Seccion</h2>
-    <p>Mas contenido...</p>
+    <h2>Second Section</h2>
+    <p>More content...</p>
 </body>
 </html>
 ```
 
 ### URLs
 
-Las paginas estan disponibles en:
+Pages are available at:
 ```
-https://tudominio.com/local/staticpage/view.php?page=nombre-pagina
+https://yourdomain.com/local/staticpage/view.php?page=page-name
 ```
 
-Con Apache mod_rewrite:
+With Apache mod_rewrite:
 ```
-https://tudominio.com/static/nombre-pagina.html
+https://yourdomain.com/static/page-name.html
 ```
 
 ---
 
-## Archivos Modificados/Nuevos
+## Modified/New Files
 
-| Archivo | Descripcion |
-|---------|-------------|
-| `classes/page_helper.php` | **NUEVO** - Clase con utilidades: TOC, tiempo lectura, compartir |
-| `view.php` | **MODIFICADO** - Logica extendida para SEO y nuevas funcionalidades |
-| `styles.css` | **MODIFICADO** - Estilos para TOC, botones compartir, navegacion |
-| `db/install.xml` | **MODIFICADO** - Nueva tabla para metadatos de paginas |
-| `db/upgrade.php` | **MODIFICADO** - Migracion para instalaciones existentes |
-| `lang/es/` | **NUEVO** - Pack de idioma espanol |
+| File | Description |
+|------|-------------|
+| `classes/page_helper.php` | **NEW** - Utility class: TOC, reading time, sharing |
+| `view.php` | **MODIFIED** - Extended logic for SEO and new features |
+| `styles.css` | **MODIFIED** - Styles for TOC, share buttons, navigation |
+| `db/install.xml` | **MODIFIED** - New table for page metadata |
+| `db/upgrade.php` | **MODIFIED** - Migration for existing installations |
+| `lang/es/` | **NEW** - Spanish language pack |
 
 ---
 
-## Compatibilidad
+## Compatibility
 
 - **Moodle**: 5.1+
 - **PHP**: 8.1+
-- **Tema**: Probado con RemUI (Edwiser), deberia funcionar con Boost y derivados
+- **Theme**: Tested with RemUI (Edwiser), should work with Boost and derivatives
 
 ---
 
 ## Upstream
 
-Este fork se basa en la version 5.1-r1 del plugin original:
+This fork is based on version 5.1-r1 of the original plugin:
 - **Original**: https://github.com/moodle-an-hochschulen/moodle-local_staticpage
-- **Documentacion original**: Ver seccion "Documentacion Original" abajo
+- **Original documentation**: See "Original Documentation" section below
 
-Para actualizar desde upstream:
+To update from upstream:
 ```bash
 git remote add upstream https://github.com/moodle-an-hochschulen/moodle-local_staticpage.git
 git fetch upstream
@@ -148,18 +148,18 @@ git merge upstream/main
 
 ---
 
-## Mantenimiento
+## Maintainers
 
-Este fork es mantenido por:
-- **Organizacion**: Fase Consulting Ibiza, S.L.
-- **Proyecto**: PreparaOposiciones
-- **Repositorio**: https://github.com/hyukudan/moodle-local_staticpage
+This fork is maintained by:
+- **Organization**: Fase Consulting Ibiza, S.L.
+- **Project**: PreparaOposiciones
+- **Repository**: https://github.com/hyukudan/moodle-local_staticpage
 
 ---
 
-# Documentacion Original
+# Original Documentation
 
-El resto de este documento contiene la documentacion original del plugin upstream.
+The rest of this document contains the original documentation from the upstream plugin.
 
 ---
 
