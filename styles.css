@@ -156,7 +156,7 @@
 
 .staticpage-article .callout-warning {
     background: #fffbeb;
-    border-left-color: #f59e0b;
+    border-left-color: #b45309;
 }
 
 .staticpage-article .callout-danger {
@@ -653,4 +653,16 @@
         padding: 0.375rem 0.75rem;
         font-size: 0.85rem;
     }
+}
+
+/* ==========================================================================
+   SEO LANDING PAGES — wider layout
+   ========================================================================== */
+
+.staticpage-content-wrapper:has(.seo-landing) {
+    max-width: 1140px;
+}
+
+body:has(.seo-landing) .staticpage-breadcrumbs {
+    max-width: 1140px;
 }

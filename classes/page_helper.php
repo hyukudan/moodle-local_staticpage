@@ -155,31 +155,31 @@ class page_helper {
         $buttons = [
             'twitter' => [
                 'url' => "https://twitter.com/intent/tweet?url={$encodedurl}&text={$encodedtitle}",
-                'icon' => 'fa-twitter',
+                'icon' => 'fa-brands fa-twitter',
                 'label' => 'Twitter',
                 'class' => 'share-btn-twitter',
             ],
             'linkedin' => [
                 'url' => "https://www.linkedin.com/sharing/share-offsite/?url={$encodedurl}",
-                'icon' => 'fa-linkedin',
+                'icon' => 'fa-brands fa-linkedin',
                 'label' => 'LinkedIn',
                 'class' => 'share-btn-linkedin',
             ],
             'whatsapp' => [
                 'url' => "https://wa.me/?text={$encodedtitle}%20{$encodedurl}",
-                'icon' => 'fa-whatsapp',
+                'icon' => 'fa-brands fa-whatsapp',
                 'label' => 'WhatsApp',
                 'class' => 'share-btn-whatsapp',
             ],
             'facebook' => [
                 'url' => "https://www.facebook.com/sharer/sharer.php?u={$encodedurl}",
-                'icon' => 'fa-facebook',
+                'icon' => 'fa-brands fa-facebook-f',
                 'label' => 'Facebook',
                 'class' => 'share-btn-facebook',
             ],
             'telegram' => [
                 'url' => "https://t.me/share/url?url={$encodedurl}&text={$encodedtitle}",
-                'icon' => 'fa-telegram',
+                'icon' => 'fa-brands fa-telegram',
                 'label' => 'Telegram',
                 'class' => 'share-btn-telegram',
             ],
@@ -191,7 +191,7 @@ class page_helper {
         foreach ($buttons as $platform => $data) {
             $html .= sprintf(
                 '<a href="%s" class="share-btn %s" target="_blank" rel="noopener noreferrer" title="%s">' .
-                '<i class="fa %s"></i><span class="sr-only">%s</span></a>',
+                '<i class="%s"></i><span class="sr-only">%s</span></a>',
                 $data['url'],
                 $data['class'],
                 get_string('shareon', 'local_staticpage', $data['label']),
@@ -203,7 +203,7 @@ class page_helper {
         // Copy link button.
         $html .= sprintf(
             '<button type="button" class="share-btn share-btn-copy" data-url="%s" title="%s">' .
-            '<i class="fa fa-link"></i><span class="sr-only">%s</span></button>',
+            '<i class="fa-solid fa-link"></i><span class="sr-only">%s</span></button>',
             s($url),
             get_string('copylink', 'local_staticpage'),
             get_string('copylink', 'local_staticpage')
@@ -229,7 +229,7 @@ class page_helper {
 
         // Home link.
         $html .= sprintf(
-            '<li class="breadcrumb-item"><a href="%s"><i class="fa fa-home"></i> %s</a></li>',
+            '<li class="breadcrumb-item"><a href="%s"><i class="fa-solid fa-house"></i> %s</a></li>',
             $CFG->wwwroot,
             get_string('home')
         );
@@ -257,7 +257,7 @@ class page_helper {
         }
 
         return '<div class="last-updated">' .
-               '<i class="fa fa-clock-o"></i> ' .
+               '<i class="fa-regular fa-clock"></i> ' .
                get_string('lastupdated', 'local_staticpage', userdate($timestamp, get_string('strftimedatefullshort'))) .
                '</div>';
     }

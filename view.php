@@ -180,8 +180,17 @@ $PAGE->set_heading($pagetitle);
 // SEO & OG META TAGS
 // ============================================================================
 
-// Canonical URL.
-$canonicalurl = $pageurl->out(false);
+// Canonical URL — use clean URL for SEO landing pages.
+$cleanurls = [
+    'preparar-oposiciones-online' => '/preparar-oposiciones-online/',
+    'academia-oposiciones-online' => '/academia-oposiciones-online/',
+    'como-preparar-oposiciones' => '/como-preparar-oposiciones/',
+];
+if (isset($cleanurls[$pageslug])) {
+    $canonicalurl = $CFG->wwwroot . $cleanurls[$pageslug];
+} else {
+    $canonicalurl = $pageurl->out(false);
+}
 
 // Default OG image (site logo or custom).
 if (empty($ogimage)) {
