@@ -191,7 +191,7 @@ class page_helper {
         foreach ($buttons as $platform => $data) {
             $html .= sprintf(
                 '<a href="%s" class="share-btn %s" target="_blank" rel="noopener noreferrer" title="%s">' .
-                '<i class="%s"></i><span class="sr-only">%s</span></a>',
+                '<i class="%s"></i><span class="visually-hidden">%s</span></a>',
                 $data['url'],
                 $data['class'],
                 get_string('shareon', 'local_staticpage', $data['label']),
@@ -203,7 +203,7 @@ class page_helper {
         // Copy link button.
         $html .= sprintf(
             '<button type="button" class="share-btn share-btn-copy" data-url="%s" title="%s">' .
-            '<i class="fa-solid fa-link"></i><span class="sr-only">%s</span></button>',
+            '<i class="fa-solid fa-link"></i><span class="visually-hidden">%s</span></button>',
             s($url),
             get_string('copylink', 'local_staticpage'),
             get_string('copylink', 'local_staticpage')
