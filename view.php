@@ -248,7 +248,13 @@ if ($pagedata && !empty($pagedata->timecreated)) {
     $schemaorg['datePublished'] = date('c', $pagedata->timecreated);
 }
 
-$metatags[] = '<script type="application/ld+json">' . json_encode($schemaorg, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>';
+// SEC2/R14: harden JSON-LD against `</script>` injection inside the data — a
+// course or FAQ field that contains the literal close tag would otherwise
+// break out of the script block and execute arbitrary HTML/JS. JSON_HEX_*
+// flags escape `<`, `>`, `&`, `'`, `"` as `\u00XX`, which schema.org parsers
+// still accept but the browser HTML tokenizer cannot exploit.
+$metatags[] = '<script type="application/ld+json">' . json_encode($schemaorg,
+    JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . '</script>';
 
 // Add all meta tags to HTML head.
 $CFG->additionalhtmlhead = $CFG->additionalhtmlhead . "\n" . implode("\n", $metatags);
