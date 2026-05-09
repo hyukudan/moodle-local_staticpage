@@ -150,5 +150,19 @@ function xmldb_local_staticpage_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2026010602, 'local', 'staticpage');
     }
 
+    if ($oldversion < 2026050901) {
+        // R22b: compound (status, showintoc) index for navigation queries.
+        // Production DB already has this index applied via online ALTER on
+        // 2026-05-09; this block ensures fresh installs receive it too.
+        global $DB;
+        $dbman = $DB->get_manager();
+        $table = new xmldb_table('local_staticpage_pages');
+        $idx = new xmldb_index('stashow_ix', XMLDB_INDEX_NOTUNIQUE, ['status', 'showintoc']);
+        if (!$dbman->index_exists($table, $idx)) {
+            $dbman->add_index($table, $idx);
+        }
+        upgrade_plugin_savepoint(true, 2026050901, 'local', 'staticpage');
+    }
+
     return true;
 }
