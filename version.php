@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_staticpage';
-$plugin->version = 2026050900;  // R16b: hardened DB-content branch (trusted=false, noclean=false).
+$plugin->version = 2026050901;  // R22b/c: navigation cache + (status,showintoc) index + rendered_html cache.
 $plugin->release = 'v5.1-r3-preparaoposiciones';
 $plugin->requires = 2024100700; // Moodle 4.5+
 $plugin->supported = [405, 501];

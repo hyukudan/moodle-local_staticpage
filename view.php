@@ -298,12 +298,25 @@ if ($source === 'database') {
     // from a compromised account) the noclean flag would have let stored XSS
     // ride straight to the browser. format_text still applies filters with
     // the safer flags below.
-    echo format_text($processedcontent, $contentformat, [
-        'trusted' => false,
-        'noclean' => false,
-        'filter' => true,
-        'context' => $context,
-    ]);
+    //
+    // R22c: cache the rendered output. format_text runs the full filter chain
+    // (multilang, autolink, format_string, etc.) — expensive when fired on
+    // every legal pageview. Key by slug + format + contextid + page mtime so
+    // any admin save invalidates implicitly. 24h TTL bounds staleness even if
+    // mtime tracking misses an edge case.
+    $renderedcache = \cache::make('local_staticpage', 'rendered_html');
+    $cachekey = $pageslug . ':' . $contentformat . ':' . $context->id . ':' . (int)($pagedata->timemodified ?? 0);
+    $rendered = $renderedcache->get($cachekey);
+    if ($rendered === false) {
+        $rendered = format_text($processedcontent, $contentformat, [
+            'trusted' => false,
+            'noclean' => false,
+            'filter' => true,
+            'context' => $context,
+        ]);
+        $renderedcache->set($cachekey, $rendered);
+    }
+    echo $rendered;
 } else {
     // File content - respect plugin settings.
     if (

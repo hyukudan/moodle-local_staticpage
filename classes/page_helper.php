@@ -296,10 +296,22 @@ class page_helper {
             return [];
         }
 
-        return $DB->get_records('local_staticpage_pages', [
+        // R22c: cache the published pages list. Used by every legal pageview
+        // for prev/next navigation. Pages change rarely (admin edits), so a
+        // 24h TTL plus event-based invalidation in admin save handler is fine.
+        $cache = \cache::make('local_staticpage', 'navigation');
+        $cached = $cache->get('nav_published');
+        if ($cached !== false) {
+            return $cached;
+        }
+
+        $pages = $DB->get_records('local_staticpage_pages', [
             'status' => 1,
             'showintoc' => 1,
         ], 'sortorder ASC, title ASC');
+
+        $cache->set('nav_published', $pages);
+        return $pages;
     }
 
     /**
