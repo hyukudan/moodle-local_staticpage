@@ -292,10 +292,15 @@ if (!empty($tocresult['toc'])) {
 
 // Page content.
 if ($source === 'database') {
-    // Database content - format with Moodle text filters.
+    // R16a: even DB-sourced static pages must run through cleanup. trusted=true
+    // + noclean=true was the leftover branch SEC2 missed; if an admin-edited
+    // page ever picks up content from a less-privileged source (eg. a paste
+    // from a compromised account) the noclean flag would have let stored XSS
+    // ride straight to the browser. format_text still applies filters with
+    // the safer flags below.
     echo format_text($processedcontent, $contentformat, [
-        'trusted' => true,
-        'noclean' => true,
+        'trusted' => false,
+        'noclean' => false,
         'filter' => true,
         'context' => $context,
     ]);

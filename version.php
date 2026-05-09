@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_staticpage';
-$plugin->version = 2026010602;  // Added OG/SEO meta tags and ogimage field.
+$plugin->version = 2026050900;  // R16b: hardened DB-content branch (trusted=false, noclean=false).
 $plugin->release = 'v5.1-r3-preparaoposiciones';
 $plugin->requires = 2024100700; // Moodle 4.5+
 $plugin->supported = [405, 501];
