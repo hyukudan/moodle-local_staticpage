@@ -41,8 +41,12 @@ function local_staticpage_check_availability($url) {
     if (!ini_get('open_basedir')) {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     }
-    // We need that to prevent false errors with self-signed certificates on webserver.
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    // SEC2: SSL_VERIFYPEER = false would silently accept any certificate
+    // (including MITM-fabricated ones) for the URL availability probe. Keep
+    // verification on; the system trust store is enough for any site reachable
+    // from this host.
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
 
     // Add the configured timeouts to the cURL request.
     curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, get_config('local_staticpage', 'checkavailabilityconnecttimeout'));

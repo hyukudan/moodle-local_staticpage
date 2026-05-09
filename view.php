@@ -304,7 +304,11 @@ if ($source === 'database') {
         $localstaticpageconfig->processfilters == STATICPAGE_PROCESSFILTERS_YES &&
             $localstaticpageconfig->cleanhtml == STATICPAGE_CLEANHTML_NO
     ) {
-        echo format_text($processedcontent, FORMAT_HTML, ['trusted' => true, 'noclean' => true, 'filter' => true]);
+        // SEC2: even when the admin chose cleanhtml=NO, never pass trusted=true +
+        // noclean=true. format_text with those flags hands raw HTML straight to
+        // the browser; combined with externally-sourced content this is a
+        // ready-made XSS vector. Keep cleanup on regardless of the toggle.
+        echo format_text($processedcontent, FORMAT_HTML, ['trusted' => false, 'noclean' => false, 'filter' => true]);
     } else if (
         $localstaticpageconfig->processfilters == STATICPAGE_PROCESSFILTERS_NO &&
             $localstaticpageconfig->cleanhtml == STATICPAGE_CLEANHTML_YES
@@ -314,7 +318,8 @@ if ($source === 'database') {
         $localstaticpageconfig->processfilters == STATICPAGE_PROCESSFILTERS_NO &&
             $localstaticpageconfig->cleanhtml == STATICPAGE_CLEANHTML_NO
     ) {
-        echo format_text($processedcontent, FORMAT_HTML, ['trusted' => true, 'noclean' => true, 'filter' => false]);
+        // SEC2: same rationale.
+        echo format_text($processedcontent, FORMAT_HTML, ['trusted' => false, 'noclean' => false, 'filter' => false]);
     } else {
         echo $processedcontent;
     }
