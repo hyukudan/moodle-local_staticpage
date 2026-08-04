@@ -59,6 +59,11 @@ $pageslug = required_param('page', PARAM_ALPHANUMEXT);
 // Fetch context.
 $context = \context_system::instance();
 
+// Set context before any format_* call: format_string() reads $PAGE->context
+// and otherwise emits a warning on anonymous visits. Keep this here so adding
+// more formatting above the page setup below cannot reopen that bug.
+$PAGE->set_context($context);
+
 // Initialize page data variables.
 $pagedata = null;
 $pagecontent = '';
@@ -83,6 +88,54 @@ if ($pagedata) {
     $metadescription = $pagedata->metadescription ?? '';
     $ogimage = $pagedata->ogimage ?? '';
     $contentformat = $pagedata->contentformat;
+
+    // R23: recover per-page <style> for DB-stored pages.
+    // setup_static_pages.php stores the whole .html document (including
+    // <head><style>) verbatim in the `content` column. The format_text() call
+    // further down runs with noclean=false, so HTMLPurifier strips <head>/<style>
+    // and every page's custom CSS was silently lost — which is why marketing
+    // static pages (como-funciona, convocatorias, recursos…) rendered unstyled.
+    // The file branch below already rescues styles (see the "Extract and preserve
+    // style tags" block); this mirrors that for the DB branch: lift <style> into
+    // additionalhtmlhead and reduce $pagecontent to the document body. Content is
+    // admin-curated (same trust level as the file branch), and only CSS text is
+    // re-emitted (no arbitrary head HTML), with a defensive strip of any stray
+    // </style>/<script> sequence.
+    if (stripos($pagecontent, '<style') !== false || stripos($pagecontent, '<body') !== false) {
+        $dbdoc = new DOMDocument();
+        @$dbdoc->loadHTML('<?xml encoding="UTF-8">' . $pagecontent);
+
+        // Collect and remove all <style> blocks (more robust than the file
+        // branch, which only lifted the first).
+        $stylenodes = [];
+        foreach ($dbdoc->getElementsByTagName('style') as $stylenode) {
+            $stylenodes[] = $stylenode;
+        }
+        $collectedcss = '';
+        foreach ($stylenodes as $stylenode) {
+            $css = (string)$stylenode->nodeValue;
+            if (trim($css) !== '') {
+                // nodeValue is already parsed CSS (no live tags), but strip any
+                // stray closing/opening tag sequence as defense in depth.
+                $css = preg_replace('#</\s*style#i', '', $css);
+                $css = preg_replace('#<\s*script#i', '', $css);
+                $collectedcss .= $css . "\n";
+            }
+            if ($stylenode->parentNode !== null) {
+                $stylenode->parentNode->removeChild($stylenode);
+            }
+        }
+        if (trim($collectedcss) !== '') {
+            $CFG->additionalhtmlhead = ($CFG->additionalhtmlhead ?? '') . '<style>' . $collectedcss . '</style>';
+        }
+
+        // Reduce content to the <body> so the TOC and format_text operate on the
+        // markup only (parity with the file branch's saveHTML($body)).
+        $dbbody = $dbdoc->getElementsByTagName('body')->item(0);
+        if ($dbbody !== null) {
+            $pagecontent = $dbdoc->saveHTML($dbbody);
+        }
+    }
 } else {
     // FALLBACK: Try to fetch from filearea (legacy storage).
     $filename = "$pageslug.html";
@@ -160,21 +213,30 @@ if ($localstaticpageconfig->apacherewrite == true) {
 // Set page URL.
 $PAGE->set_url($pageurl);
 
-// Set page context.
-$PAGE->set_context($context);
-
 // Use frontpage layout for transparent navbar effect.
 // This gives us the same visual treatment as the landing page.
 $PAGE->set_pagelayout('frontpage');
+
+// Marketing/landing pages render as a full-bleed, self-styled landing (their
+// content is a designed page, not an article). They drop the "article chrome"
+// (page heading, breadcrumbs, reading time, TOC, share, prev/next) that legal
+// and reference pages keep. Add a slug here to opt a page into the landing look.
+$marketingslugs = ['como-funciona'];
+$hidechrome = in_array($pageslug, $marketingslugs, true);
 
 // Add special body classes for static pages.
 $PAGE->add_body_class('local-staticpage');
 $PAGE->add_body_class('local-staticpage-' . $pageslug);
 $PAGE->add_body_class('staticpage-transparent-nav'); // Custom class for navbar styling.
+if ($hidechrome) {
+    $PAGE->add_body_class('staticpage-chromeless');
+}
 
 // Set page title and heading.
 $PAGE->set_title($pagetitle . ' | ' . $SITE->shortname);
-$PAGE->set_heading($pagetitle);
+// Landing pages provide their own H1 in the content, so suppress the theme page
+// heading to avoid a duplicate/stray heading above the hero.
+$PAGE->set_heading($hidechrome ? '' : $pagetitle);
 
 // ============================================================================
 // SEO & OG META TAGS
@@ -268,26 +330,33 @@ use local_staticpage\page_helper;
 
 echo $OUTPUT->header();
 
-// Generate breadcrumbs.
-echo page_helper::generate_breadcrumbs($pagetitle, $canonicalurl);
+// Generate breadcrumbs (article chrome — skipped for landing pages).
+if (!$hidechrome) {
+    echo page_helper::generate_breadcrumbs($pagetitle, $canonicalurl);
+}
 
 // Wrap content in a styled container for static pages.
 echo '<div class="staticpage-content-wrapper">';
 echo '<article class="staticpage-article">';
 
-// Reading time and page meta.
-$readingtime = page_helper::calculate_reading_time($pagecontent);
-echo '<div class="staticpage-meta">';
-echo '<span class="reading-time"><i class="fa fa-clock-o"></i> ' . $readingtime['formatted'] . '</span>';
-echo '</div>';
+// Reading time and page meta (article chrome — skipped for landing pages).
+if (!$hidechrome) {
+    $readingtime = page_helper::calculate_reading_time($pagecontent);
+    echo '<div class="staticpage-meta">';
+    echo '<span class="reading-time"><i class="fa fa-clock-o"></i> ' . $readingtime['formatted'] . '</span>';
+    echo '</div>';
+}
 
-// Process content and generate TOC.
-$tocresult = page_helper::generate_toc($pagecontent);
-$processedcontent = $tocresult['content'];
-
-// Show TOC if there are headings.
-if (!empty($tocresult['toc'])) {
-    echo $tocresult['toc'];
+// Process content and generate TOC. Landing pages skip both: their markup is
+// self-contained and must not be rewritten with anchor ids.
+if ($hidechrome) {
+    $processedcontent = $pagecontent;
+} else {
+    $tocresult = page_helper::generate_toc($pagecontent);
+    $processedcontent = $tocresult['content'];
+    if (!empty($tocresult['toc'])) {
+        echo $tocresult['toc'];
+    }
 }
 
 // Page content.
@@ -349,16 +418,18 @@ if ($source === 'database') {
     }
 }
 
-// Last modified date (for database pages).
-if ($pagedata && !empty($pagedata->timemodified)) {
+// Last modified date (for database pages) — article chrome, skipped on landings.
+if ($pagedata && !empty($pagedata->timemodified) && !$hidechrome) {
     echo page_helper::format_last_modified($pagedata->timemodified);
 }
 
-// Social sharing buttons.
-echo page_helper::generate_share_buttons($canonicalurl, $pagetitle, $metadescription);
+// Social sharing buttons (article chrome — skipped for landing pages).
+if (!$hidechrome) {
+    echo page_helper::generate_share_buttons($canonicalurl, $pagetitle, $metadescription);
+}
 
-// Previous/Next navigation (for database pages).
-if ($source === 'database') {
+// Previous/Next navigation (for database pages) — skipped on landings.
+if ($source === 'database' && !$hidechrome) {
     $pagenav = page_helper::get_page_navigation($pageslug);
     if ($pagenav['prev'] || $pagenav['next']) {
         echo '<nav class="staticpage-pagination">';
